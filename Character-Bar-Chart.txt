@@ -1,0 +1,53 @@
+#Terminal
+
+#pyspark
+# Reading the Text File
+
+r= sc.textFile("resume.txt")
+r1 = r.map(lambda x: x.replace(' ',''))
+
+## Removing Punctuations and whitespaces
+
+import string
+punct = set(string.punctuation)
+punct
+
+# Import Regular Expression
+
+import re
+def removePunctuation(text):
+...   text=text.lower().strip()
+...   text=re.sub("[^0-9a-zA-Z ]", ' ', text)
+...   return text
+
+r2 = r1.map(removePunctuation)
+r3 = r2.flatMap(lambda x: x)
+r4 = r3.map(lambda x: (x, 1))
+r5 = r4.reduceByKey(lambda x, y: (x + y))
+
+# Saving result to local to be further analyzed by Python
+
+r5.saveAsTextFile("/home/abhishek/")
+
+
+#Terminal
+#Python
+
+data = [line.strip() for line in open('resultplot.txt/part-00000', 'r')]
+data
+ 	
+list1 = [str(x.split(",")[0].replace("(u", "").replace("'", "")) for x in data]
+list2 = [int(x.split(",")[1].replace(")","").replace(")", "").replace(" ", "")) for x in data]
+
+## Bar-Chart Plot
+
+import matplotlib.pyplot as plt; plt.rcdefaults()
+import numpy as np
+import matplotlib.pyplot as plt
+y_pos = np.arange(len(list1))
+plt.barh(y_pos, list2, align='center', alpha=0.5)
+plt.yticks(y_pos, list1)
+plt.xlabel('count')
+plt.title('Character Frequency Plot')
+plt.show()
+
