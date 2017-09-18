@@ -1,0 +1,30 @@
+##Terminal
+##Pyspark
+
+## all non-conformant postal codes into a file paired with their `complaint_ID`
+
+rr= sc.textFile("/home/abhishek/Downloads/Consumer_Complaints.csv", use_unicode=False)
+import csv;
+rdd = rr.mapPartitions(lambda x: csv.reader(x))
+rdd1 = rdd.map(lambda x:x)
+header  = rdd.first()
+rdd2 = rdd1.filter(lambda row: row != header)
+rdd3 = rdd2.filter(lambda x: x[16] != "No").map(lambda x: (x[9], x[16]))
+rdd3.saveAsTextFile(“/home/abhishek/noconformant.txt”)
+
+## complaints reported in or after 2016.
+
+header = rdd1.first()
+df = rdd1.filter(lambda row: row!= header).toDF(header)
+df1 = df.select("Date received", "Product","Sub-product","Issue","Sub-issue","Consumer complaint narrative","Company public response","Company","State","ZIP code","Tags","Consumer consent provided?","Submitted via","Date sent to company","Company response to consumer","Timely response?","Consumer disputed?","Complaint ID",substring("Date received", 7, 4).alias("Year"))
+df1.filter(df1.Year == "2016").show()
+
+## records grouped by their zip (for example: Number of Complaints By Zip, Most Common Complaint Type By Zip, etc)
+
+df2 = df1.groupBy("ZIP code").agg({"Complaint ID": "count", "Issue":"count"})
+df2.show()
+## save the result back to textfile 
+df2.rdd.saveAsTextFile("/home/abhishek/complaint-result")
+
+
+

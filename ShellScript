@@ -1,0 +1,28 @@
+## Downloading the Files
+grep "StormEvents_details" result.txt >> stormdetails.csv
+
+wget -i Storm/stormdetails.txt --directory-prefix Storm/details
+wget -i Storm/stormlocation.txt --directory-prefix Storm/location
+wget -i result.txt --directory-prefix sample
+
+## Uncompressing the files
+find  /home/abhishek/Storm/fatalities  -name "*csv.gz"  -exec gzip -d {} \;
+find  /home/abhishek/Storm/location  -name "*csv.gz"  -exec gzip -d {} \;
+find  /home/abhishek/Storm/details  -name "*csv.gz"  -exec gzip -d {} \;
+
+tail -n +2  sample/StormEvents*.csv  >> sample/final
+ 
+
+##  Grouping the similar Files:
+
+grep -v "==>" sample/final >> sample/final1.csv
+grep -v "==>"   /home/abhishek/Storm/location/location_appended/location1 >> /home/abhishek/Storm/location/location_appended/location.txt
+grep -v "==>"   /home/abhishek/Storm/details/details_appended/details1 >> /home/abhishek/Storm/details/details_appended/details.txt
+grep -v "==>"   /home/abhishek/Storm/fatalities/fatalities_appended/fatalities1 >> /home/abhishek/Storm/fatalities/fatalities_appended/fatalities.tx
+
+
+## Removing the white spaces:
+
+grep -v '^$' /home/abhishek/Storm/location/location_appended/location.txt >> /home/abhishek/Storm/location/location_appended/location.txt
+
+

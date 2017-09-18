@@ -1,0 +1,20 @@
+# Importing BeautifulSoup
+
+from bs4 import BeautifulSoup
+r = urllib.request.urlopen('https://www1.ncdc.noaa.gov/pub/data/swdi/stormevents/csvfiles/')
+soup  = BeautifulSoup(r)
+all_links = soup.find_all("a")
+
+for i in all_links:
+    inks.append(i.get('href'))
+r = [elem for elem in links if 'csv.gz' in elem ]
+
+
+## Exporting FTP links to a textfile
+
+import csv	
+with open("result.txt","w") as f:
+...    wr = csv.writer(f,delimiter="\n")
+...    for element in r:
+...      wr.writerow(["https://www1.ncdc.noaa.gov/pub/data/swdi/stormevents/csvfiles/" + element])
+

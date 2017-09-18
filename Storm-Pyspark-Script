@@ -1,0 +1,25 @@
+## Terminal
+## pyspark
+
+
+## Reading the files
+details = sc.textFile("/home/abhishek/Storm/details/details_appended/details.txt")
+fatalities = sc.textFile("/home/abhishek/Storm/fatalities/fatalities_appended/fatalities.txt")
+location = sc.textFile("/home/abhishek/Storm/location/location_appended/location.txt")
+
+
+## Analysis
+details = sc.textFile("/home/abhishek/Storm/details/details_appended/details.txt")
+dmap = details.map(lambda x :(x.split(",")[8], x.split(",")[10], x.split(",")[24]))
+dmap1 = dmap.map(lambda x: (x[0], x[1],str.replace(str(x[2]), "K", "000")))
+dmap2 = dmap1.map(lambda x: (x[0], x[1],str.replace(str(x[2]), "M", "000000")))
+dmap3 = dmap2.map(lambda x:(x[0], x[1], x[2].strip('""')))
+dmap4 = dmap3.map(lambda x : ((x[0],x[1]),float(x[2])))
+dmap5 = dmap4.reduceByKey(lambda x, y: x + y)
+
+
+##Saving the result in JSON
+dmap5.map(lambda x: x[0] + "," + x[1] + "," + x[2]) 	 	
+dmap6 = dmap5.toDF()
+dmap6.toJSON().saveAsTextFile("dmap6")
+
